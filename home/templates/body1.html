@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <title>Document</title>
+</head>
+<body>
+    <header style="background-color: green;">
+        <img src="{% static 'home/Logo.png' %}" alt="Logo" width="50" height="auto">
+    </header>
+    <nav>
+        <!-- Aquí va el contenido de la barra de navegación -->
+        <ul>
+            <li><a href="#">Inicio</a></li>
+            <li><a href="#">Acerca de</a></li>
+            <li><a href="#">Contacto</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <section>
+            <!-- Aquí va el contenido de la primera sección -->
+            <h2>Sección 1</h2>
+            <p>Contenido de la sección 1...</p>
+        </section>
+
+        <section>
+            <!-- Aquí va el contenido de la segunda sección -->
+            <h2>Sección 2</h2>
+            <p>Contenido de la sección 2...</p>
+        </section>
+    </div>
+
+    <div class="container">
+        <div>
+            <!-- Aquí va el contenido del primer div -->
+            <h3>Div 1</h3>
+            <p>Contenido del div 1...</p>
+        </div>
+
+        <div>
+            <!-- Aquí va el contenido del segundo div -->
+            <h3>Div 2</h3>
+            <p>Contenido del div 2...</p>
+        </div>
+
+        <div>
+            <!-- Aquí va el contenido del tercer div -->
+            <h3>Div 3</h3>
+            <p>Contenido del div 3...</p>
+        </div>
+    </div>
+
+    <footer>
+        <!-- Aquí va el contenido del pie de página -->
+        <p>Este es el pie de página.</p>
+    </footer>
+</body>
+</html>
