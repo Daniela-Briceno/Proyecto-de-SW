@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <title>Proyecto de Software</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <!-- Encabezado -->
+    <header class="d-flex align-items-center border p-3">
+        <div class="logos">
+            <img src="{% static 'home/Logo1.png' %}" alt="Logo" width="60" height="auto">
+            <img src="{% static 'home/Logo2.png' %}" alt="Logo2" width="250" height="auto">
+        </div>
+        <div class="ml-auto d-flex align-items-center">
+            <a href="{% url 'body' %}" class="btn gradient-btn mr-3"><strong>INICIO</strong></a>
+            <div class="input-group">
+                <input type="text" class="form-control form-control-lg" placeholder="Buscar...">
+                <div class="input-group-append">
+                    <span class="input-group-text">
+                        <i class="fas fa-search"></i>
+                    </span>
+                </div>
+            </div>
+        </div>        
+    </header>
+
+    <!-- Barra de navegación en el aside -->
+    <aside>
+        <nav class="navbar navbar-expand-lg navbar-light" style="background: linear-gradient(to right, #28a745, #007bff); box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); height: 50px;">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item mx-5">
+                    <a class="nav-link" href="pronostico_mp10.html" style="color: #fff; padding: 5px; font-size: 18px; font-weight: bold;">Pronóstico MP10</a>
+                </li>
+                <li class="nav-item mx-5">
+                    <a class="nav-link" href="estaciones.html" style="color: #fff; padding: 5px; font-size: 18px; font-weight: bold;">Estaciones</a>
+                </li>
+                <li class="nav-item mx-5">
+                    <a class="nav-link" href="datos_historicos.html" style="color: #fff; padding: 5px; font-size: 18px; font-weight: bold;">Datos Históricos</a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+
+    <!-- Bootstrap JS, Popper.js, and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
