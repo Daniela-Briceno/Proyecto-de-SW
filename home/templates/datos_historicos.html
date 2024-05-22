@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <style>
+        .datos-historicos {
+            background-color: #fff; 
+        }
+    </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% load static %}
@@ -42,14 +47,13 @@
                 <li class="nav-item mx-5">
                     <a class="nav-link" href="estaciones.html" style="color: #fff; padding: 5px; font-size: 18px; font-weight: bold;">Estaciones</a>
                 </li>
-                <li class="nav-item mx-5">
-                    <a class="nav-link" href="datos_historicos.html" style="color: #fff; padding: 5px; font-size: 18px; font-weight: bold;">Datos Históricos</a>
+                <li class="nav mx-5">
+                    <a class="nav-link datos-historicos" href="datos_historicos.html" style="color: #000; padding: 5px; font-size: 18px; font-weight: bold;">Datos Históricos</a>
                 </li>
             </ul>
         </nav>
     </aside>
-
-
+    
     <!-- Contenido principal -->
     <main class="container mt-5">
         <div class="card col-md-8 shadow mx-auto"> <!-- Añadida clase mx-auto -->
@@ -57,7 +61,7 @@
                 <h3 class="mb-0">Seleccionar Sector y Estación</h3>
             </div>
             <div class="card-body">
-                <form id="selectionForm" onsubmit="mostrarCsvCard(); return false;">
+                <form id="selectionForm">
                     <div class="form-group">
                         <label for="sector">Sector:</label>
                         <select class="form-control" id="sector">
@@ -99,41 +103,6 @@
     </main>
     
     <script>
-        function mostrarCsvCard() {
-            document.getElementById('csvCard').classList.remove('d-none');
-            document.getElementById('downloadBtnContainer').style.display = 'block';
-    
-            // Generar el contenido CSV
-            var csvContent = "data:text/csv;charset=utf-8,";
-            var rows = document.querySelectorAll("#csvBody tr");
-            rows.forEach(function(row) {
-                var rowData = [];
-                row.querySelectorAll("td").forEach(function(cell) {
-                    rowData.push(cell.innerText);
-                });
-                csvContent += rowData.join(",") + "\r\n";
-            });
-    
-            // Crear un enlace de descarga
-            var encodedUri = encodeURI(csvContent);
-            document.getElementById('downloadCsv').setAttribute('href', encodedUri);
-            document.getElementById('downloadCsv').setAttribute('target', '_blank');
-            document.getElementById('downloadCsv').setAttribute('rel', 'noopener noreferrer');
-            document.getElementById('downloadCsv').setAttribute('download', 'datos.csv');
-        }
-    </script>
-       
-    
-    <script>
-        document.getElementById("selectionForm").addEventListener("submit", function(event) {
-            event.preventDefault(); // Evita que se envíe el formulario
-    
-            // Muestra la segunda tarjeta
-            document.getElementById("secondCard").style.display = "block";
-        });
-    </script>
-    
-    <script>
         const estaciones = {
             Andacollo: ["Andacollo", "Chepiquilla", "ElSauce", "Hospital", "Urmenetra"],
             LosVilos: ["Caimanes", "Chacay", "ElMauro", "PuntoChungo"],
@@ -144,7 +113,7 @@
             const sector = this.value;
             const estacionSelect = document.getElementById('estacionSelect');
             estacionSelect.innerHTML = '<option value="" disabled selected>Selecciona una estación</option>';
-    
+
             if (estaciones[sector]) {
                 estaciones[sector].forEach(estacion => {
                     const option = document.createElement('option');
@@ -154,14 +123,14 @@
                 });
             }
         });
-    
+
         document.getElementById('selectionForm').addEventListener('submit', function(event) {
             event.preventDefault(); // Evita el envío del formulario y la recarga de la página
-    
+        
             // Obtiene los valores seleccionados
             const sector = document.getElementById('sector').value;
             const estacion = document.getElementById('estacionSelect').value;
-    
+        
             // Lógica para cargar el archivo CSV correspondiente
             const csvFileName = `/static/csv_files/${sector}_${estacion}.csv`; // Ajusta la ruta aquí si es necesario
             fetch(csvFileName)
@@ -172,18 +141,44 @@
                     return response.text();
                 })
                 .then(data => {
-                    displayCSV(data);
+                    // Muestra la tarjeta de CSV y procesa los datos
+                    document.getElementById('csvCard').classList.remove('d-none');
+                    document.getElementById('downloadBtnContainer').style.display = 'block';
+                    mostrarCsvCard(data, sector, estacion); // Pasar el nombre del sector y de la estación
                 })
                 .catch(error => {
                     console.error('Error:', error);
                 });
-        });
-    
+        });        
+
+        function mostrarCsvCard(csvContent, sector, estacion) {
+            document.getElementById('csvCard').classList.remove('d-none');
+            document.getElementById('downloadBtnContainer').style.display = 'block';
+        
+            // Generar el contenido CSV
+            var rows = csvContent.split('\n').map(row => row.split(','));
+            displayCSV(rows);
+        
+            // Crear un objeto Blob
+            var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
+        
+            // Crear un objeto URL
+            var url = URL.createObjectURL(blob);
+        
+            // Configurar el enlace de descarga
+            var downloadLink = document.getElementById('downloadCsv');
+            downloadLink.href = url;
+            // Cambiar el nombre del archivo para incluir el nombre del sector y la estación
+            downloadLink.download = `${sector}_${estacion}.csv`;
+        }
+         
+
         function displayCSV(data) {
-            const rows = data.split('\n').map(row => row.split(','));
-            const header = rows[0];
-            const body = rows.slice(1);
-    
+            console.log(data);
+
+            const header = data[0];
+            const body = data.slice(1);
+
             // Llenar la cabecera de la tabla
             const csvHeader = document.getElementById('csvHeader');
             csvHeader.innerHTML = '';
@@ -192,7 +187,7 @@
                 th.textContent = cell;
                 csvHeader.appendChild(th);
             });
-    
+
             // Llenar el cuerpo de la tabla
             const csvBody = document.getElementById('csvBody');
             csvBody.innerHTML = '';

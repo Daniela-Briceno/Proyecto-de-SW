@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <style>
+        .estaciones {
+            background-color: #fff; 
+        }
+    </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="styles.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <title>Proyecto de Software</title>
@@ -20,8 +24,9 @@
             <img src="{% static 'home/Logo2.png' %}" alt="Logo2" width="250" height="auto">
         </div>
         <div class="ml-auto d-flex align-items-center">
-            <a href="{% url 'body' %}" class="btn gradient-btn mr-3"><strong>INICIO</strong></a>
-            <div class="input-group">
+            <a href="{% url 'body' %}" class="btn gradient-btn mr-3" style="color: #651616; font-size: 17px;"><strong>Inicio</strong></a>
+            <a href="{% url 'contacto' %}" class="btn gradient-btn mr-3" style="color: #651616; font-size: 17px;"><strong>Contacto</strong></a>
+            <div class="input-group" style="margin-right: 20px;">
                 <input type="text" class="form-control form-control-lg" placeholder="Buscar...">
                 <div class="input-group-append">
                     <span class="input-group-text">
@@ -34,13 +39,13 @@
 
     <!-- Barra de navegación en el aside -->
     <aside>
-        <nav class="navbar navbar-expand-lg navbar-light" style="background: linear-gradient(to right, #28a745, #007bff); box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); height: 50px;">
+        <nav class="navbar navbar-expand-lg navbar-light" style="background: linear-gradient(to right, #8a2626, #300707); box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); height: 50px;">
             <ul class="navbar-nav mx-auto">
                 <li class="nav-item mx-5">
                     <a class="nav-link" href="pronostico_mp10.html" style="color: #fff; padding: 5px; font-size: 18px; font-weight: bold;">Pronóstico MP10</a>
                 </li>
-                <li class="nav-item mx-5">
-                    <a class="nav-link" href="estaciones.html" style="color: #fff; padding: 5px; font-size: 18px; font-weight: bold;">Estaciones</a>
+                <li class="nav mx-5">
+                    <a class="nav-link estaciones" href="estaciones.html" style="color: #000; padding: 5px; font-size: 18px; font-weight: bold;">Estaciones</a>
                 </li>
                 <li class="nav-item mx-5">
                     <a class="nav-link" href="datos_historicos.html" style="color: #fff; padding: 5px; font-size: 18px; font-weight: bold;">Datos Históricos</a>
@@ -49,7 +54,43 @@
         </nav>
     </aside>
 
-
+    <main class="container mt-5">
+        <div class="card col-md-8 shadow mx-auto"> <!-- Añadida clase mx-auto -->
+            <div class="card-header gradient-estaciones">
+                <h3 class="mb-0">Seleccionar Estación</h3>
+            </div>
+            <div class="card-body">
+                <form id="selectionForm" onsubmit="mostrarCsvCard(); return false;">
+                    <div class="form-group">
+                        <label for="sector">Sector:</label>
+                        <select class="form-control" id="sector">
+                            <option value="" disabled selected>Selecciona una estación</option>
+                            <option class="disabled-option" value="Andacollo" disabled>-- Andacollo --</option>
+                            <option value="Andacollo">Andacollo</option>
+                            <option value="Chepiquilla">Chepiquilla</option>
+                            <option value="ElSauce">El Sauce</option>
+                            <option value="Hospital">Hospital</option>
+                            <option value="Urmenetra">Urmenetra</option>
+                            <option class="disabled-option" value="LosVilos" disabled>-- Los Vilos --</option>
+                            <option value="Caimanes">Caimanes</option>
+                            <option value="Chacay">Chacay</option>
+                            <option value="ElMauro">El Mauro</option>
+                            <option value="PuntoChungo">PuntoChungo</option>
+                            <option class="disabled-option" value="Salamanca" disabled>-- Salamanca --</option>
+                            <option value="Camisas">Camisas</option>
+                            <option value="Coiron">Coiron</option>
+                            <option value="Cuncumen">Cuncumen</option>
+                            <option value="HotelMina">HotelMina</option>
+                            <option value="QuelenAlto">QuelenAlto</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Buscar</button>
+                </form>
+            </div>
+        </div>
+    </main>
+    
+    
     <!-- Bootstrap JS, Popper.js, and jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>

@@ -35,6 +35,14 @@
     color: white; /* Cambiar el color del texto si es necesario para que se vea bien en el gradiente */
 }
 
+.gradient-estaciones {
+    background: linear-gradient(135deg, #ffffff, #d0cbcb);
+    color: #000; /* Cambiar el color del texto si es necesario para que se vea bien en el gradiente */
+}
+.gradient-pronostico {
+    background: linear-gradient(135deg, #408535, #0b321b);
+    color: #fff; /* Cambiar el color del texto si es necesario para que se vea bien en el gradiente */
+}
 
 .navbar-nav .nav-item .nav-link:hover {
     background: linear-gradient(to right, #408535, #0b321b);
@@ -51,3 +59,6 @@
     vertical-align: middle; /* Centrar verticalmente el contenido */
 }
 
+.disabled-option {
+    font-weight: bold;
+}

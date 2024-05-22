@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <style>
+        .pronostico {
+            background-color: #fff; 
+        }
+    </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="styles.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <title>Proyecto de Software</title>
@@ -20,8 +24,9 @@
             <img src="{% static 'home/Logo2.png' %}" alt="Logo2" width="250" height="auto">
         </div>
         <div class="ml-auto d-flex align-items-center">
-            <a href="{% url 'body' %}" class="btn gradient-btn mr-3"><strong>INICIO</strong></a>
-            <div class="input-group">
+            <a href="{% url 'body' %}" class="btn gradient-btn mr-3" style="color: #651616; font-size: 17px;"><strong>Inicio</strong></a>
+            <a href="{% url 'contacto' %}" class="btn gradient-btn mr-3" style="color: #651616; font-size: 17px;"><strong>Contacto</strong></a>
+            <div class="input-group" style="margin-right: 20px;">
                 <input type="text" class="form-control form-control-lg" placeholder="Buscar...">
                 <div class="input-group-append">
                     <span class="input-group-text">
@@ -34,13 +39,13 @@
 
     <!-- Barra de navegación en el aside -->
     <aside>
-        <nav class="navbar navbar-expand-lg navbar-light" style="background: linear-gradient(to right, #28a745, #007bff); box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); height: 50px;">
+        <nav class="navbar navbar-expand-lg navbar-light" style="background: linear-gradient(to right, #8a2626, #300707); box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); height: 50px;">
             <ul class="navbar-nav mx-auto">
-                <li class="nav-item mx-5">
-                    <a class="nav-link" href="pronostico_mp10.html" style="color: #fff; padding: 5px; font-size: 18px; font-weight: bold;">Pronóstico MP10</a>
+                <li class="nav mx-5">
+                    <a class="nav-link pronostico" href="pronostico_mp10.html" style="color: #000; padding: 5px; font-size: 18px; font-weight: bold;">Pronóstico MP10</a>
                 </li>
                 <li class="nav-item mx-5">
-                    <a class="nav-link" href="estaciones.html" style="color: #fff; padding: 5px; font-size: 18px; font-weight: bold;">Estaciones</a>
+                    <a class="nav-link " href="estaciones.html" style="color: #fff; padding: 5px; font-size: 18px; font-weight: bold;">Estaciones</a>
                 </li>
                 <li class="nav-item mx-5">
                     <a class="nav-link" href="datos_historicos.html" style="color: #fff; padding: 5px; font-size: 18px; font-weight: bold;">Datos Históricos</a>
@@ -49,40 +54,34 @@
         </nav>
     </aside>
 
+    <!-- Contenido principal -->
     <main class="container mt-5">
-        <div class="card">
-            <div class="card-header">
-                <h3>Seleccionar Estación y Fecha</h3>
+        <div class="card col-md-8 shadow mx-auto"> <!-- Añadida clase mx-auto -->
+            <div class="card-header gradient-pronostico">
+                <h3 class="mb-0">Seleccionar Sector, Estación y Fecha</h3>
             </div>
             <div class="card-body">
-                <form>
+                <form id="selectionForm" onsubmit="mostrarCsvCard(); return false;">
                     <div class="form-group">
-                        <label for="estacion">Estación:</label>
-                        <select class="form-control" id="estacion">
-                            <option value="" disabled selected><strong>-- Andacollo --</strong></option>
-                            <option value="region1">Región 1</option>
-                            <option value="region2">Región 2</option>
-                            <option value="region3">Región 3</option>
-                            <option value="" disabled selected><strong>-- Los Vilos --</strong></option>
-                            <option value="region1">Región 1</option>
-                            <option value="region2">Región 2</option>
-                            <option value="region3">Región 3</option>
-                            <option value="" disabled selected><strong>-- Salamanca --</strong></option>
-                            <option value="region1">Región 1</option>
-                            <option value="region2">Región 2</option>
-                            <option value="region3">Región 3</option>
-                            <option value="" disabled selected>Seleccionar una Estación</option>
-
+                        <label for="sector">Sector:</label>
+                        <select class="form-control" id="sector">
+                            <option value="" disabled selected>Selecciona un sector</option>
+                            <option value="Andacollo">Andacollo</option>
+                            <option value="LosVilos">Los Vilos</option>
+                            <option value="Salamanca">Salamanca</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="">Año:</label>
-                        <input type="number" class="form-control" id="anio" min="2022" max="2027" step="1" value="2022">
+                        <label for="estacion">Estación:</label>
+                        <select class="form-control" id="estacionSelect">
+                            <option value="" disabled selected>Selecciona una estación</option>
+                        </select>
                     </div>
-                    <button type="submit" class="btn btn-primary">Enviar</button>
+                    <button type="submit" class="btn btn-primary">Buscar</button>
                 </form>
             </div>
         </div>
+        
     </main>
 
     <!-- Bootstrap JS, Popper.js, and jQuery -->
