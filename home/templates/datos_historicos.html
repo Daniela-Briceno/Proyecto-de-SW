@@ -6,7 +6,6 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="styles.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <title>Proyecto de Software</title>
@@ -20,8 +19,9 @@
             <img src="{% static 'home/Logo2.png' %}" alt="Logo2" width="250" height="auto">
         </div>
         <div class="ml-auto d-flex align-items-center">
-            <a href="{% url 'body' %}" class="btn gradient-btn mr-3"><strong>INICIO</strong></a>
-            <div class="input-group">
+            <a href="{% url 'body' %}" class="btn gradient-btn mr-3" style="color: #651616; font-size: 17px;"><strong>Inicio</strong></a>
+            <a href="{% url 'contacto' %}" class="btn gradient-btn mr-3" style="color: #651616; font-size: 17px;"><strong>Contacto</strong></a>
+            <div class="input-group" style="margin-right: 20px;">
                 <input type="text" class="form-control form-control-lg" placeholder="Buscar...">
                 <div class="input-group-append">
                     <span class="input-group-text">
@@ -34,7 +34,7 @@
 
     <!-- Barra de navegación en el aside -->
     <aside>
-        <nav class="navbar navbar-expand-lg navbar-light" style="background: linear-gradient(to right, #28a745, #007bff); box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); height: 50px;">
+        <nav class="navbar navbar-expand-lg navbar-light" style="background: linear-gradient(to right, #8a2626, #300707); box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); height: 50px;">
             <ul class="navbar-nav mx-auto">
                 <li class="nav-item mx-5">
                     <a class="nav-link" href="pronostico_mp10.html" style="color: #fff; padding: 5px; font-size: 18px; font-weight: bold;">Pronóstico MP10</a>
@@ -49,44 +49,165 @@
         </nav>
     </aside>
 
+
+    <!-- Contenido principal -->
     <main class="container mt-5">
-        <div class="card">
-            <div class="card-header">
-                <h3>Seleccionar Estación y Fecha</h3>
+        <div class="card col-md-8 shadow mx-auto"> <!-- Añadida clase mx-auto -->
+            <div class="card-header gradient-background">
+                <h3 class="mb-0">Seleccionar Sector y Estación</h3>
             </div>
             <div class="card-body">
-                <form>
+                <form id="selectionForm" onsubmit="mostrarCsvCard(); return false;">
                     <div class="form-group">
-                        <label for="estacion">Estación:</label>
-                        <select class="form-control" id="estacion">
-                            <option value="" disabled selected><strong>-- Andacollo --</strong></option>
-                            <option value="region1">Región 1</option>
-                            <option value="region2">Región 2</option>
-                            <option value="region3">Región 3</option>
-                            <option value="" disabled selected><strong>-- Los Vilos --</strong></option>
-                            <option value="region1">Región 1</option>
-                            <option value="region2">Región 2</option>
-                            <option value="region3">Región 3</option>
-                            <option value="" disabled selected><strong>-- Salamanca --</strong></option>
-                            <option value="region1">Región 1</option>
-                            <option value="region2">Región 2</option>
-                            <option value="region3">Región 3</option>
-                            <option value="" disabled selected>Seleccionar una Estación</option>
-
+                        <label for="sector">Sector:</label>
+                        <select class="form-control" id="sector">
+                            <option value="" disabled selected>Selecciona un sector</option>
+                            <option value="Andacollo">Andacollo</option>
+                            <option value="LosVilos">Los Vilos</option>
+                            <option value="Salamanca">Salamanca</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="">Año:</label>
-                        <input type="number" class="form-control" id="anio" min="2018" max="2022" step="1" value="2018">
+                        <label for="estacion">Estación:</label>
+                        <select class="form-control" id="estacionSelect">
+                            <option value="" disabled selected>Selecciona una estación</option>
+                        </select>
                     </div>
-                    <button type="submit" class="btn btn-primary">Enviar</button>
+                    <button type="submit" class="btn btn-primary">Buscar</button>
+                    <!-- Contenedor para el botón de descarga -->
+                    <div class="form-group">
+                        <div id="downloadBtnContainer" class="text-right mb-3" style="display: none;">
+                            <a href="#" class="btn btn-primary" id="downloadCsv" download>Descargar CSV</a>
+                        </div>
+                    </div>
                 </form>
+            </div>
+        </div>
+        <div class="card mt-4 col-md-8 d-none shadow mx-auto" id="csvCard"> <!-- Añadida clase mx-auto -->
+            <div class="card-header gradient-background">
+                <h3 class="mb-0">Datos del CSV</h3>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered" id="csvTable">
+                    <thead>
+                        <tr id="csvHeader"></tr>
+                    </thead>
+                    <tbody id="csvBody"></tbody>
+                </table>
             </div>
         </div>
     </main>
     
-
-
+    <script>
+        function mostrarCsvCard() {
+            document.getElementById('csvCard').classList.remove('d-none');
+            document.getElementById('downloadBtnContainer').style.display = 'block';
+    
+            // Generar el contenido CSV
+            var csvContent = "data:text/csv;charset=utf-8,";
+            var rows = document.querySelectorAll("#csvBody tr");
+            rows.forEach(function(row) {
+                var rowData = [];
+                row.querySelectorAll("td").forEach(function(cell) {
+                    rowData.push(cell.innerText);
+                });
+                csvContent += rowData.join(",") + "\r\n";
+            });
+    
+            // Crear un enlace de descarga
+            var encodedUri = encodeURI(csvContent);
+            document.getElementById('downloadCsv').setAttribute('href', encodedUri);
+            document.getElementById('downloadCsv').setAttribute('target', '_blank');
+            document.getElementById('downloadCsv').setAttribute('rel', 'noopener noreferrer');
+            document.getElementById('downloadCsv').setAttribute('download', 'datos.csv');
+        }
+    </script>
+       
+    
+    <script>
+        document.getElementById("selectionForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Evita que se envíe el formulario
+    
+            // Muestra la segunda tarjeta
+            document.getElementById("secondCard").style.display = "block";
+        });
+    </script>
+    
+    <script>
+        const estaciones = {
+            Andacollo: ["Andacollo", "Chepiquilla", "ElSauce", "Hospital", "Urmenetra"],
+            LosVilos: ["Caimanes", "Chacay", "ElMauro", "PuntoChungo"],
+            Salamanca: ["Camisas", "Coiron", "Cuncumen", "HotelMina", "QuelenAlto"]
+        };
+    
+        document.getElementById('sector').addEventListener('change', function() {
+            const sector = this.value;
+            const estacionSelect = document.getElementById('estacionSelect');
+            estacionSelect.innerHTML = '<option value="" disabled selected>Selecciona una estación</option>';
+    
+            if (estaciones[sector]) {
+                estaciones[sector].forEach(estacion => {
+                    const option = document.createElement('option');
+                    option.value = estacion;
+                    option.textContent = estacion;
+                    estacionSelect.appendChild(option);
+                });
+            }
+        });
+    
+        document.getElementById('selectionForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Evita el envío del formulario y la recarga de la página
+    
+            // Obtiene los valores seleccionados
+            const sector = document.getElementById('sector').value;
+            const estacion = document.getElementById('estacionSelect').value;
+    
+            // Lógica para cargar el archivo CSV correspondiente
+            const csvFileName = `/static/csv_files/${sector}_${estacion}.csv`; // Ajusta la ruta aquí si es necesario
+            fetch(csvFileName)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error al cargar el archivo CSV');
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    displayCSV(data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+    
+        function displayCSV(data) {
+            const rows = data.split('\n').map(row => row.split(','));
+            const header = rows[0];
+            const body = rows.slice(1);
+    
+            // Llenar la cabecera de la tabla
+            const csvHeader = document.getElementById('csvHeader');
+            csvHeader.innerHTML = '';
+            header.forEach(cell => {
+                const th = document.createElement('th');
+                th.textContent = cell;
+                csvHeader.appendChild(th);
+            });
+    
+            // Llenar el cuerpo de la tabla
+            const csvBody = document.getElementById('csvBody');
+            csvBody.innerHTML = '';
+            body.forEach(row => {
+                const tr = document.createElement('tr');
+                row.forEach(cell => {
+                    const td = document.createElement('td');
+                    td.textContent = cell;
+                    tr.appendChild(td);
+                });
+                csvBody.appendChild(tr);
+            });
+        }
+    </script>
+    
     <!-- Bootstrap JS, Popper.js, and jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>

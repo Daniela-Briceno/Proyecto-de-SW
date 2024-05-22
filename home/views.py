@@ -4,6 +4,9 @@ from django.http import HttpResponse
 def home(request):
     return render(request, 'body.html')
 
+def contacto(request):
+    return render(request, 'contacto.html')
+
 def datos(request):
     return render(request, 'datos_historicos.html')
 

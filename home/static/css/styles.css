@@ -26,13 +26,28 @@
     width: 100px;
 }
 
-.gradient-btn {
-    background: linear-gradient(45deg, #ff6b6b, #f06595); /* Gradiente personalizado */
-    color: white;
-    border: none;
-    transition: background 0.3s ease-in-out;
+.gradient-btn:hover {
+    background: linear-gradient(45deg, #ffffff, #d0e8d6); /* Gradiente al pasar el ratón por encima */
 }
 
-.gradient-btn:hover {
-    background: linear-gradient(45deg, #ff8787, #fa8eae); /* Gradiente al pasar el ratón por encima */
+.gradient-background {
+    background: linear-gradient(135deg, #8a2626, #300707);
+    color: white; /* Cambiar el color del texto si es necesario para que se vea bien en el gradiente */
 }
+
+
+.navbar-nav .nav-item .nav-link:hover {
+    background: linear-gradient(to right, #408535, #0b321b);
+}
+
+#csvTable {
+    font-size: 14px; /* Reducir el tamaño de la fuente */
+}
+
+#csvTable th,
+#csvTable td {
+    padding: 0.5rem; /* Reducir el espacio entre celdas */
+    text-align: center; /* Centrar el contenido de las celdas */
+    vertical-align: middle; /* Centrar verticalmente el contenido */
+}
+
