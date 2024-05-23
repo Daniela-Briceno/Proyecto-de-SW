@@ -3,7 +3,7 @@
 <head>
     <style>
         .estaciones {
-            background-color: #fff; 3333333333333
+            background-color: #fff; 
         }
         #map {
             height: 550px;
@@ -69,7 +69,7 @@
             <div class="card-body">
                 <form id="selectionForm">
                     <div class="form-group">
-                        <label for="sector">Sector:</label>
+                        <label for="Estacion">Estación:</label>
                         <select class="form-control" id="sector">
                             <option value="" disabled selected>Selecciona una estación</option>
                             <option class="disabled-option" value="Andacollo" disabled>-- Andacollo --</option>
@@ -112,7 +112,6 @@
     
     <!-- Leaflet.js -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.7.5/proj4.js"></script>
 
     <script>
         var map;
@@ -132,9 +131,12 @@
                     // Inicializar el mapa Leaflet
                     map = L.map('map').setView([51.505, -0.09], 13); // Cambia las coordenadas y el nivel de zoom según tus necesidades
     
-                    // Agregar una capa de mapa base
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    // Agregar una capa de mapa base de Google Maps
+                    L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+                        maxZoom: 20,
+                        subdomains:['mt0','mt1','mt2','mt3'],
+                        attribution: 'Map data &copy; <a href="https://www.google.com/">Google</a>',
+                        apiKey: 'YOUR_GOOGLE_MAPS_API_KEY' // Aquí debes colocar tu clave de API
                     }).addTo(map);
                 } else {
                     map.invalidateSize();
@@ -189,9 +191,12 @@
                             // Inicializar el mapa Leaflet
                             map = L.map('map').setView([lat, lng], 13);
 
-                            // Agregar una capa de mapa base
-                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                            // Agregar una capa de mapa base de Google Maps
+                            L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+                                maxZoom: 20,
+                                subdomains:['mt0','mt1','mt2','mt3'],
+                                attribution: 'Map data &copy; <a href="https://www.google.com/">Google</a>',
+                                apiKey: 'YOUR_GOOGLE_MAPS_API_KEY' // Aquí debes colocar tu clave de API
                             }).addTo(map);
                         } else {
                             map.setView([lat, lng], 13);
@@ -209,7 +214,6 @@
                 }
             });
         }
-
     
         // Función para retroceder al formulario
         function retrocederFormulario() {
