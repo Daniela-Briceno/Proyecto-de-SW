@@ -3,14 +3,13 @@
 <head>
     <style>
         .estaciones {
-            background-color: #fff; 
+            background-color: #fff; 3333333333333
         }
         #map {
-            height: 400px;
+            height: 550px;
         }
         #csvData {
             height: 400px;
-            overflow-y: auto;
         }
     </style>
     <meta charset="UTF-8">
@@ -149,14 +148,14 @@
             $.get(csvFilePath, function(data) {
                 var lines = data.split('\n');
                 var html = '<table class="table table-striped"><thead><tr>';
-    
+
                 // Crear encabezados de la tabla
                 var headers = lines[0].split(',');
                 headers.forEach(function(header) {
                     html += '<th>' + header + '</th>';
                 });
                 html += '</tr></thead><tbody>';
-    
+
                 // Crear filas de la tabla
                 for (var i = 1; i < lines.length; i++) {
                     var row = lines[i].split(',');
@@ -167,10 +166,50 @@
                     html += '</tr>';
                 }
                 html += '</tbody></table>';
-                
+
+                // Mostrar la tabla en el contenedor csvData
                 document.getElementById('csvData').innerHTML = html;
+
+                // Busca la línea que contiene las coordenadas
+                var coordenadas;
+                for (var i = 0; i < lines.length; i++) {
+                    if (lines[i].startsWith('Coordenadas')) {
+                        coordenadas = lines[i].split(',')[1].trim();
+                        break;
+                    }
+                }
+
+                if (coordenadas) {
+                    var latlng = coordenadas.split(' ');
+                    var lat = parseFloat(latlng[0]);
+                    var lng = parseFloat(latlng[1]);
+
+                    if (!isNaN(lat) && !isNaN(lng)) {
+                        if (!map) {
+                            // Inicializar el mapa Leaflet
+                            map = L.map('map').setView([lat, lng], 13);
+
+                            // Agregar una capa de mapa base
+                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                            }).addTo(map);
+                        } else {
+                            map.setView([lat, lng], 13);
+                        }
+
+                        // Agregar marcador al mapa
+                        L.marker([lat, lng]).addTo(map)
+                            .bindPopup(`<b>${sector}</b><br>Coordenadas: ${lat}, ${lng}`)
+                            .openPopup();
+                    } else {
+                        console.error('Error al leer las coordenadas del archivo CSV.');
+                    }
+                } else {
+                    console.error('No se encontraron coordenadas en el archivo CSV.');
+                }
             });
         }
+
     
         // Función para retroceder al formulario
         function retrocederFormulario() {
@@ -184,4 +223,5 @@
         // Asigna el evento clic al botón de retroceso
         document.getElementById('backButton').addEventListener('click', retrocederFormulario);
     </script>
-    
+</body>
+</html>
