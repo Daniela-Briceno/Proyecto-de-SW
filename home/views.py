@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from django.http import HttpResponse 
+from django.http import HttpResponse
+
 
 def home(request):
     return render(request, 'body.html')
@@ -15,4 +16,5 @@ def estaciones(request):
 
 def pronostico(request):
     return render(request, 'pronostico_mp10.html')
+
 
