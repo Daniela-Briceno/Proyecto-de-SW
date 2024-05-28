@@ -7,7 +7,8 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    
+    <script src="https://maps.googleapis.com/maps/api/js?key=TU_CLAVE_DE_API"></script>
+
     <title>Proyecto de Software</title>
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -75,43 +76,66 @@
                     height="100%" 
                     frameborder="0" 
                     style="border:0" 
-                    src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d110307.87893118885!2d-71.13390232239!3d-30.233619605069332!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses-419!2scl!4v1715888564434!5m2!1ses-419!2scl" 
-                    allowfullscreen="" 
-                    aria-hidden="false" 
+                    src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d874596.05920639!2d-71.12841008837397!3d-31.098866922811297!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses-419!2scl!4v1716490020103!5m2!1ses-419!2scl" 
                     tabindex="0">
                 </iframe>
             </div>
         </section>  
     </main>    
 
+    <!-- Sección de botones -->
     <section class="d-flex justify-content-center section-buttons flex-wrap" style="padding: 20px; background-color: #f8f9fa;">
-
         <a href="#" class="button-div border m-3 d-flex justify-content-center align-items-center" style="text-decoration: none; width: 200px; height: 200px; border-radius: 8px; transition: transform 0.2s; background: url({% static 'home/Boton1.png' %}) no-repeat center center; background-size: cover;">
-        <div style="width: 100%; height: 100%; text-align: center; display: flex; justify-content: center; align-items: center;">
-        </div>
-    </a>
-    <a href="#" class="button-div border m-3 d-flex justify-content-center align-items-center" style="text-decoration: none; width: 200px; height: 200px; border-radius: 8px; transition: transform 0.2s; background: url({% static 'home/Boton2.png' %}) no-repeat center center; background-size: cover;">
-        <div style="width: 100%; height: 100%; text-align: center; display: flex; justify-content: center; align-items: center;">
-        </div>
-    </a>
-    <a href="#" class="button-div border m-3 d-flex justify-content-center align-items-center" style="text-decoration: none; width: 200px; height: 200px; border-radius: 8px; transition: transform 0.2s; background: url({% static 'home/Boton3.png' %}) no-repeat center center; background-size: cover;">
-        <div style="width: 100%; height: 100%; text-align: center; display: flex; justify-content: center; align-items: center;">
-        </div>
-    </a>
-</section>
+            <div style="width: 100%; height: 100%; text-align: center; display: flex; justify-content: center; align-items: center;">
+            </div>
+        </a>
+        <a href="#" class="button-div border m-3 d-flex justify-content-center align-items-center" style="text-decoration: none; width: 200px; height: 200px; border-radius: 8px; transition: transform 0.2s; background: url({% static 'home/Boton2.png' %}) no-repeat center center; background-size: cover;">
+            <div style="width: 100%; height: 100%; text-align: center; display: flex; justify-content: center; align-items: center;">
+            </div>
+        </a>
+        <a href="#" class="button-div border m-3 d-flex justify-content-center align-items-center" style="text-decoration: none; width: 200px; height: 200px; border-radius: 8px; transition: transform 0.2s; background: url({% static 'home/Boton3.png' %}) no-repeat center center; background-size: cover;">
+            <div style="width: 100%; height: 100%; text-align: center; display: flex; justify-content: center; align-items: center;">
+            </div>
+        </a>
+    </section>
     
+    <!-- Script para leer el archivo CSV y mostrar los marcadores en el mapa -->
     <script>
-        // Add a hover effect to scale the buttons slightly
-        document.querySelectorAll('.button-div').forEach(button => {
-            button.addEventListener('mouseenter', () => {
-                button.style.transform = 'scale(1.05)';
-            });
-            button.addEventListener('mouseleave', () => {
-                button.style.transform = 'scale(1)';
-            });
-        });
-    </script> 
-    
+        // Función para leer el archivo CSV
+        function leerCSV() {
+            fetch("{% static 'csv_files/coordenadas.csv' %}")
+                .then(response => response.text())
+                .then(data => {
+                    // Dividir el CSV en líneas
+                    const lines = data.split('\n');
+                    
+                    // Crear un mapa
+                    const map = new google.maps.Map(document.getElementById('map'), {
+                        zoom: 8,
+                        center: { lat: -30.5, lng: -71 }
+                    });
+
+                    // Iterar sobre cada línea del CSV
+                    lines.forEach(line => {
+                        const [nombre, latitud, longitud] = line.split(',');
+                        
+                        // Convertir latitud y longitud a números
+                        const lat = parseFloat(latitud);
+                        const lng = parseFloat(longitud);
+                        
+                        // Crear marcador
+                        const marker = new google.maps.Marker({
+                            position: { lat, lng },
+                            map,
+                            title: nombre
+                        });
+                    });
+                });
+        }
+
+        // Llamar a la función para leer el CSV cuando se cargue la página
+        window.onload = leerCSV;
+    </script>
 
     <!-- Pie de página -->
     <footer class="border text-center py-3 mt-auto">
