@@ -5,6 +5,9 @@
         .pronostico {
             background-color: #fff; 
         }
+        .data-card {
+            display: none;
+        }
     </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -41,11 +44,11 @@
     <aside>
         <nav class="navbar navbar-expand-lg navbar-light" style="background: linear-gradient(to right, #8a2626, #300707); box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); height: 50px;">
             <ul class="navbar-nav mx-auto">
-                <li class="nav mx-5">
+                <li class="nav-item mx-5">
                     <a class="nav-link pronostico" href="pronostico_mp10.html" style="color: #000; padding: 5px; font-size: 18px; font-weight: bold;">Pronóstico MP10</a>
                 </li>
                 <li class="nav-item mx-5">
-                    <a class="nav-link " href="estaciones.html" style="color: #fff; padding: 5px; font-size: 18px; font-weight: bold;">Estaciones</a>
+                    <a class="nav-link" href="estaciones.html" style="color: #fff; padding: 5px; font-size: 18px; font-weight: bold;">Estaciones</a>
                 </li>
                 <li class="nav-item mx-5">
                     <a class="nav-link" href="datos_historicos.html" style="color: #fff; padding: 5px; font-size: 18px; font-weight: bold;">Datos Históricos</a>
@@ -56,15 +59,15 @@
 
     <!-- Contenido principal -->
     <main class="container mt-5">
-        <div class="card col-md-8 shadow mx-auto"> <!-- Añadida clase mx-auto -->
+        <div class="card col-md-8 shadow mx-auto">
             <div class="card-header gradient-pronostico">
                 <h3 class="mb-0">Seleccionar Comuna, Estación y Fecha</h3>
             </div>
             <div class="card-body">
                 <form id="selectionForm" onsubmit="mostrarCsvCard(); return false;">
                     <div class="form-group">
-                        <label for="Comuna">Comuna:</label>
-                        <select class="form-control" id="sector">
+                        <label for="sector">Comuna:</label>
+                        <select class="form-control" id="sector" required>
                             <option value="" disabled selected>Selecciona una Comuna</option>
                             <option value="Andacollo">Andacollo</option>
                             <option value="LosVilos">Los Vilos</option>
@@ -72,21 +75,120 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="estacion">Estación:</label>
-                        <select class="form-control" id="estacionSelect">
+                        <label for="estacionSelect">Estación:</label>
+                        <select class="form-control" id="estacionSelect" required>
                             <option value="" disabled selected>Selecciona una estación</option>
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="startDate">Fecha de Inicio:</label>
+                        <input type="date" class="form-control" id="startDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">Fecha Final:</label>
+                        <input type="date" class="form-control" id="endDate" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Buscar</button>
                 </form>
             </div>
         </div>
+        <div class="card col-md-8 shadow mx-auto data-card" id="dataCard" style="display: none; background-color: #f8f9fa; border-radius: 10px; margin-top: 20px; padding: 20px;">
+            <h3 class="mb-4" style="color: #212529; font-size: 24px; font-weight: bold;">Datos del Pronóstico</h3>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr id="tableHead" style="background-color: #343a40; color: #fff;">
+                            <!-- Los encabezados de la tabla se llenarán dinámicamente -->
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Los datos de la tabla se llenarán dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
         
     </main>
+
+    <script>
+        const estaciones = {
+            Andacollo: ["Andacollo", "Chepiquilla", "ElSauce", "Hospital", "Urmenetra"],
+            LosVilos: ["Caimanes", "Chacay", "ElMauro", "PuntoChungo"],
+            Salamanca: ["Camisas", "Coiron", "Cuncumen", "HotelMina", "QuelenAlto"]
+        };
+
+        document.getElementById('sector').addEventListener('change', function() {
+            const sector = this.value;
+            const estacionSelect = document.getElementById('estacionSelect');
+            estacionSelect.innerHTML = '<option value="" disabled selected>Selecciona una estación</option>';
+
+            if (estaciones[sector]) {
+                estaciones[sector].forEach(estacion => {
+                    const option = document.createElement('option');
+                    option.value = estacion;
+                    option.textContent = estacion;
+                    estacionSelect.appendChild(option);
+                });
+            }
+        });
+
+        function mostrarCsvCard() {
+            const comuna = document.getElementById("sector").value;
+            const estacion = document.getElementById("estacionSelect").value;
+            const startDate = document.getElementById("startDate").value;
+            const endDate = document.getElementById("endDate").value;
+
+            const csvFileName = `/static/csv_files/Pronostico_${comuna}_${estacion}.csv`; 
+            fetch(csvFileName)
+                .then(response => response.text())
+                .then(data => {
+                    const rows = data.split('\n');
+                    const tableHead = document.getElementById("tableHead");
+                    const tableBody = document.getElementById("tableBody");
+
+                    tableHead.innerHTML = '';
+                    tableBody.innerHTML = '';
+
+                    const headers = rows[0].split(',');
+                    headers.forEach(header => {
+                        const th = document.createElement('th');
+                        th.textContent = header;
+                        tableHead.appendChild(th);
+                    });
+
+                    const filteredRows = rows.slice(1).filter(row => {
+                        const cells = row.split(',');
+                        const date = new Date(cells[0].split('-').reverse().join('-'));
+                        const start = new Date(startDate);
+                        const end = new Date(endDate);
+                        return date >= start && date <= end;
+                    });
+
+                    filteredRows.forEach(row => {
+                        const cells = row.split(',');
+                        const tr = document.createElement('tr');
+                        cells.forEach(cell => {
+                            const td = document.createElement('td');
+                            td.textContent = cell;
+                            tr.appendChild(td);
+                        });
+                        tableBody.appendChild(tr);
+                    });
+
+                    document.getElementById("dataCard").style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error al leer el archivo CSV:', error);
+                    alert('Error al leer el archivo CSV.');
+                });
+        }
+
+    </script>
 
     <!-- Bootstrap JS, Popper.js, and jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
 </body>
 </html>
