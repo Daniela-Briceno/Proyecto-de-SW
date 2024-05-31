@@ -78,20 +78,41 @@
         </section>
     </main>
 
-    <!-- Sección de botones mejorada -->
-    <section class="d-flex justify-content-center section-buttons flex-wrap" style="padding: 20px; background-color: #f8f9fa;">
-        <a href="proyecto.html" class="button-div border m-3 d-flex justify-content-center align-items-center btn-1" style="text-decoration: none; width: 200px; height: 150px; border-radius: 8px; transition: transform 0.2s; background: url({% static 'home/Boton1.png' %}) no-repeat center center; background-size: cover;">
-            <span class="button-text"></span>
-        </a>
-        <a href="mp10.html" class="button-div border m-3 d-flex justify-content-center align-items-center btn-2" style="text-decoration: none; width: 200px; height: 150px; border-radius: 8px; transition: transform 0.2s; background: url({% static 'home/Boton2.png' %}) no-repeat center center; background-size: cover;">
-            <span class="button-text"></span>
-        </a>
-        <a href="quienesomos.html" class="button-div border m-3 d-flex justify-content-center align-items-center btn-3" style="text-decoration: none; width: 200px; height: 150px; border-radius: 8px; transition: transform 0.2s; background: url({% static 'home/Boton3.png' %}) no-repeat center center; background-size: cover;">
-            <span class="button-text"></span>
-        </a>
+    <section class="section-buttons" style="padding: 10px 110px;">
+        <div class="button-container d-flex align-items-start m-1" style="width: 100%; height: 120px;">
+            <a href="proyecto.html" class="button-div border btn-1" style="text-decoration: none; flex: 0 0 120px; height: 120px; border-radius: 8px; background: url({% static 'home/Boton1.png' %}) no-repeat center center; background-size: cover; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+            </a>
+            <div class="description p-2" style="flex: 1;">
+                <h4 style="color: maroon;">PROPÓSITO DEL PROYECTO</h4>
+                <p>Este proyecto se enfoca en predecir los niveles de MP10 y proporcionar una escala de impacto en los cultivos para ayudar a los agricultores a proteger sus cosechas. <a href="proyecto.html">Ver más...</a></p>
+            </div>
+        </div>
+    </section>
+        
+    <section class="section-buttons" style="padding: 0px 110px;">
+        <div class="button-container d-flex align-items-start m-1" style="width: 100%; height: 120px;">
+            <a href="mp10.html" class="button-div border btn-2" style="text-decoration: none; flex: 0 0 120px; height: 120px; border-radius: 8px; background: url({% static 'home/Boton2.png' %}) no-repeat center center; background-size: cover; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+            </a>
+            <div class="description p-2" style="flex: 1;">
+                <h4 style="color: maroon;">MP10 EN EL AIRE</h4>
+                <p>La presencia del MP10 en el aire puede tener un impacto significativo en el sector agrícola, afectando negativamente la salud de los cultivos. <a href="mp10.html">Ver más...</a></p>
+            </div>
+        </div>
     </section>
     
-
+    <section class="section-buttons" style="padding: 5px 110px;">
+        <div class="button-container d-flex align-items-start m-1" style="width: 100%; height: 120px;">
+            <a href="quienesomos.html" class="button-div border btn-3" style="text-decoration: none; flex: 0 0 120px; height: 100px; border-radius: 8px; background: url({% static 'home/Boton3.png' %}) no-repeat center center; background-size: cover; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+            </a>
+            <div class="description p-2" style="flex: 1;">
+                <h4 style="color: maroon;">CONÓCENOS</h4>
+                <p>Somos un equipo de estudiantes dedicados a proporcionar información sobre los niveles de MP10 y su impacto en los cultivos, comprometidos con la precisión, responsabilidad ambiental y agrícola. <a href="quienesomos.html">Ver más...</a></p>
+            </div>
+        </div>
+    </section>
+    
+    
+  
 
     <!-- Pie de página -->
     <footer class="border text-center py-1 mt-auto">
@@ -107,46 +128,46 @@
         </nav>
     </footer>
 
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script>
-    // Función para leer el archivo CSV y mostrar los marcadores en el mapa
-    function leerCSV() {
-        fetch("{% static 'csv_files/coordenadas.csv' %}")
-            .then(response => response.text())
-            .then(data => {
-                const map = L.map('map').setView([-30.9, -71], 8); // Coordenadas del centro del mapa y nivel de zoom                
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Función para leer el archivo CSV y mostrar los marcadores en el mapa
+        function leerCSV() {
+            fetch("{% static 'csv_files/coordenadas.csv' %}")
+                .then(response => response.text())
+                .then(data => {
+                    const map = L.map('map').setView([-30.9, -71], 8); // Coordenadas del centro del mapa y nivel de zoom                
 
-                // Creamos una capa de Mapbox Streets
-                var streetsLayer = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-                    maxZoom: 18,
-                    tileSize: 512,
-                    zoomOffset: -1,
-                    accessToken: 'pk.eyJ1IjoiZGFuaWtraSIsImEiOiJjbHdwczh0YjQxcGMwMnFwZ3B4dDBhOGlyIn0.f80sAhtZxhn0smqBNLZC0w'
-                });
+                    // Creamos una capa de Mapbox Streets
+                    var streetsLayer = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+                        maxZoom: 18,
+                        tileSize: 512,
+                        zoomOffset: -1,
+                        accessToken: 'pk.eyJ1IjoiZGFuaWtraSIsImEiOiJjbHdwczh0YjQxcGMwMnFwZ3B4dDBhOGlyIn0.f80sAhtZxhn0smqBNLZC0w'
+                    });
 
-                // Agregamos ambas capas al mapa
-                streetsLayer.addTo(map);
+                    // Agregamos ambas capas al mapa
+                    streetsLayer.addTo(map);
 
-                // Dividir el CSV en líneas
-                const lines = data.split('\n');
-                
-                // Iterar sobre cada línea del CSV
-                lines.forEach(line => {
-                    const [nombre, latitud, longitud] = line.split(',');
+                    // Dividir el CSV en líneas
+                    const lines = data.split('\n');
                     
-                    // Convertir latitud y longitud a números
-                    const lat = parseFloat(latitud);
-                    const lng = parseFloat(longitud);
-                    
-                    // Crear marcador y añadirlo al mapa
-                    L.marker([lat, lng]).addTo(map).bindPopup(nombre);
+                    // Iterar sobre cada línea del CSV
+                    lines.forEach(line => {
+                        const [nombre, latitud, longitud] = line.split(',');
+                        
+                        // Convertir latitud y longitud a números
+                        const lat = parseFloat(latitud);
+                        const lng = parseFloat(longitud);
+                        
+                        // Crear marcador y añadirlo al mapa
+                        L.marker([lat, lng]).addTo(map).bindPopup(nombre);
+                    });
                 });
-            });
-    }
+        }
 
-    // Llamar a la función para leer el CSV cuando se cargue la página
-    window.onload = leerCSV;
-</script>
+        // Llamar a la función para leer el CSV cuando se cargue la página
+        window.onload = leerCSV;
+    </script>
 
     
     <!-- Bootstrap JS, Popper.js, and jQuery -->
