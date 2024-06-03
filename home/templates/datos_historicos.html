@@ -132,7 +132,7 @@
             const estacion = document.getElementById('estacionSelect').value;
         
             // Lógica para cargar el archivo CSV correspondiente
-            const csvFileName = `/static/csv_files/${sector}_${estacion}.csv`; // Ajusta la ruta aquí si es necesario
+            const csvFileName = `/static/csv_files/historicos/${sector}_${estacion}.csv`; // Ajusta la ruta aquí si es necesario
             fetch(csvFileName)
                 .then(response => {
                     if (!response.ok) {

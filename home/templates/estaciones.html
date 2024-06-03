@@ -146,7 +146,7 @@
     
         // Función para cargar datos del CSV
         function cargarCsvData(sector) {
-            var csvFilePath = `/static/csv_files/${sector}.csv`;
+            var csvFilePath = `/static/csv_files/coordenadas/${sector}.csv`;
             $.get(csvFilePath, function(data) {
                 var lines = data.split('\n');
                 var html = '<table class="table table-striped"><thead><tr>';
