@@ -44,7 +44,7 @@
     <aside>
         <nav class="navbar navbar-expand-lg navbar-light" style="background: linear-gradient(to right, #8a2626, #300707); box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); height: 50px;">
             <ul class="navbar-nav mx-auto">
-                <li class="nav-item mx-5">
+                <li class="nav mx-5">
                     <a class="nav-link pronostico" href="pronostico_mp10.html" style="color: #000; padding: 5px; font-size: 18px; font-weight: bold;">Pronóstico MP10</a>
                 </li>
                 <li class="nav-item mx-5">
@@ -60,8 +60,9 @@
     <!-- Contenido principal -->
     <main class="container mt-5">
         <div class="card col-md-8 shadow mx-auto">
-            <div class="card-header gradient-pronostico">
-                <h3 class="mb-0">Seleccionar Comuna, Estación y Fecha</h3>
+            <div class="card-header gradient-pronostico d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">Seleccionar Comuna y Estación</h3>
+                <i class="fas fa-question-circle" data-toggle="modal" data-target="#infoModal" style="cursor: pointer;"></i>
             </div>
             <div class="card-body">
                 <form id="selectionForm" onsubmit="mostrarCsvCard(); return false;">
@@ -81,13 +82,14 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="startDate">Fecha de Inicio:</label>
-                        <input type="date" class="form-control" id="startDate" required>
+                        <label for="startDate">Fecha de Inicio (opcional):</label>
+                        <input type="date" class="form-control" id="startDate">
                     </div>
                     <div class="form-group">
-                        <label for="endDate">Fecha Final:</label>
-                        <input type="date" class="form-control" id="endDate" required>
+                        <label for="endDate">Fecha de Fin (opcional):</label>
+                        <input type="date" class="form-control" id="endDate">
                     </div>
+                    
                     <button type="submit" class="btn btn-primary">Buscar</button>
                 </form>
             </div>
@@ -109,6 +111,26 @@
         </div>
         
     </main>
+
+    <!-- Modal -->
+    <div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="infoModalLabel">Información</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Los datos pertenece a enero del 2023.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         const estaciones = {
@@ -137,7 +159,7 @@
             const estacion = document.getElementById("estacionSelect").value;
             const startDate = document.getElementById("startDate").value;
             const endDate = document.getElementById("endDate").value;
-
+        
             const csvFileName = `/static/csv_files/pronostico/Prediccion_${comuna}_${estacion}.csv`; 
             fetch(csvFileName)
                 .then(response => response.text())
@@ -145,25 +167,28 @@
                     const rows = data.split('\n');
                     const tableHead = document.getElementById("tableHead");
                     const tableBody = document.getElementById("tableBody");
-
+        
                     tableHead.innerHTML = '';
                     tableBody.innerHTML = '';
-
+        
                     const headers = rows[0].split(',');
                     headers.forEach(header => {
                         const th = document.createElement('th');
                         th.textContent = header;
                         tableHead.appendChild(th);
                     });
-
-                    const filteredRows = rows.slice(1).filter(row => {
-                        const cells = row.split(',');
-                        const date = new Date(cells[0].split('-').reverse().join('-'));
-                        const start = new Date(startDate);
-                        const end = new Date(endDate);
-                        return date >= start && date <= end;
-                    });
-
+        
+                    let filteredRows = rows.slice(1);
+                    if (startDate && endDate) {
+                        filteredRows = filteredRows.filter(row => {
+                            const cells = row.split(',');
+                            const date = new Date(cells[0].split('-').reverse().join('-'));
+                            const start = new Date(startDate);
+                            const end = new Date(endDate);
+                            return date >= start && date <= end;
+                        });
+                    }
+        
                     filteredRows.forEach(row => {
                         const cells = row.split(',');
                         const tr = document.createElement('tr');
@@ -174,7 +199,7 @@
                         });
                         tableBody.appendChild(tr);
                     });
-
+        
                     document.getElementById("dataCard").style.display = 'block';
                 })
                 .catch(error => {
@@ -182,6 +207,7 @@
                     alert('Error al leer el archivo CSV.');
                 });
         }
+        
 
     </script>
 

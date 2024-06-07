@@ -65,13 +65,33 @@
     </aside>
 
     <!-- Contenido principal -->
-    <main class="d-flex flex-grow-1 border flex-column flex-md-row">
-        <aside class="border col-12 col-md-3" style="min-height: 450px;">
-            <h4 class="text-center" style="color: #681f1f; margin-bottom: 10px; font-weight: bold; font-size: 1.2em;">MP10 DE HOY</h4>
-            <div class="location" style="margin-bottom: 5px;">
-                <!-- Contenido del aside -->
+    <main class="d-flex flex-grow-2 border flex-column flex-md-row">
+        <aside class="border col-12 col-md-3 p-1 rounded shadow-sm">
+            <h4 class="text-center mb-3" style="color: #681f1f; font-weight: bold; font-size: 1.2em;">Promedio del MP10</h4>
+            <div class="location">
+                <div class="card bg-light mb-3">
+                    <div class="card-body">
+                        <p class="card-text"><strong>Andacollo:</strong></p>
+                        <p class="card-text">   MP10: 30, Impacto: 4</p>
+                    </div>
+                </div>
+                <div class="card bg-light mb-3">
+                    <div class="card-body">
+                        <p class="card-text"><strong>Los Vilos:</strong></p>
+                        <p class="card-text">   MP10: 30, Impacto: 4</p>
+                    </div>
+                </div>
+                <div class="card bg-light mb-3">
+                    <div class="card-body">
+                        <p class="card-text"><strong>Salamanca:</strong></p>
+                        <p class="card-text">   MP10: 30, Impacto: 4</p>
+                    </div>
+                </div>
             </div>
         </aside>
+        
+        
+        
         <section class="border col-12 col-md-9" style="min-height: 450px;">
             <!-- Contenido de la sección -->
             <div id="map" style="height: 450px;"></div>
