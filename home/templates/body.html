@@ -5,15 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Proyecto de Software</title>
-    <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <!-- Font Awesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 
-    <!-- CSS adicional para mejorar los botones -->
     <style>
         .button-div:hover {
             transform: scale(1.1);
@@ -22,6 +18,10 @@
             color: white;
             font-weight: bold;
             font-size: 1.2em;
+        }
+        .wide-modal .modal-dialog {
+            max-width: 800px; 
+            margin: 1.75rem auto; 
         }
     </style>
 </head>
@@ -36,14 +36,6 @@
         <div class="ml-auto d-flex align-items-center">
             <a href="{% url 'body' %}" class="btn gradient-btn mr-3" style="color: #651616; font-size: 17px;"><strong>Inicio</strong></a>
             <a href="{% url 'contacto' %}" class="btn gradient-btn mr-3" style="color: #651616; font-size: 17px;"><strong>Contacto</strong></a>
-            <div class="input-group" style="margin-right: 20px;">
-                <input type="text" class="form-control form-control-lg" placeholder="Buscar...">
-                <div class="input-group-append">
-                    <span class="input-group-text">
-                        <i class="fas fa-search"></i>
-                    </span>
-                </div>
-            </div>
         </div>        
     </header>
 
@@ -67,70 +59,87 @@
     <!-- Contenido principal -->
     <main class="d-flex flex-grow-2 border flex-column flex-md-row">
         <aside class="border col-12 col-md-3 p-1 rounded shadow-sm">
-            <h4 class="text-center mb-3" style="color: #681f1f; font-weight: bold; font-size: 1.2em;">Promedio del MP10</h4>
-            <div class="location">
-                <div class="card bg-light mb-3">
-                    <div class="card-body">
-                        <p class="card-text"><strong>Andacollo:</strong></p>
-                        <p class="card-text">   MP10: 30, Impacto: 4</p>
-                    </div>
-                </div>
-                <div class="card bg-light mb-3">
-                    <div class="card-body">
-                        <p class="card-text"><strong>Los Vilos:</strong></p>
-                        <p class="card-text">   MP10: 30, Impacto: 4</p>
-                    </div>
-                </div>
-                <div class="card bg-light mb-3">
-                    <div class="card-body">
-                        <p class="card-text"><strong>Salamanca:</strong></p>
-                        <p class="card-text">   MP10: 30, Impacto: 4</p>
-                    </div>
-                </div>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="text-center mb-0" style="color: #651616; font-weight: bold; font-size: 1.2em;">Escala de Impacto</h4>
+                <i class="fas fa-question-circle" data-toggle="modal" data-target="#infoModal" style="cursor: pointer; margin-left: 10px; color: #651616"></i>
             </div>
+            <img src="{% static 'home/Escala.png' %}" alt="Logo" width="auto" height="400px">
         </aside>
         
-        
-        
         <section class="border col-12 col-md-9" style="min-height: 450px;">
-            <!-- Contenido de la sección -->
             <div id="map" style="height: 450px;"></div>
         </section>
     </main>
 
-    <section class="section-buttons" style="padding: 10px 110px;">
-        <div class="button-container d-flex align-items-start m-1" style="width: 100%; height: 120px;">
-            <a href="proyecto.html" class="button-div border btn-1" style="text-decoration: none; flex: 0 0 120px; height: 120px; border-radius: 8px; background: url({% static 'home/Boton1.png' %}) no-repeat center center; background-size: cover; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-            </a>
-            <div class="description p-2" style="flex: 1;">
-                <h4 style="color: maroon;">PROPÓSITO DEL PROYECTO</h4>
-                <p>Este proyecto se enfoca en predecir los niveles de MP10 y proporcionar una escala de impacto en los cultivos para ayudar a los agricultores a proteger sus cosechas. <a href="proyecto.html">Ver más...</a></p>
+    <div class="container" style="padding: 10px 50px;">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <a href="proyecto.html" class="card-img-top" style="text-decoration: none; background: url({% static 'home/Boton1.png' %}) no-repeat center center; background-size: cover; height: 120px; border-radius: 8px; transition: transform 0.2s;"></a>
+                    <div class="card-body">
+                        <h5 class="card-title" style="color: maroon;">PROPÓSITO DEL PROYECTO</h5>
+                        <p class="card-text">Este proyecto se enfoca en predecir los niveles de MP10 y proporcionar una escala de impacto en los cultivos para ayudar a los agricultores a proteger sus cosechas. <a href="proyecto.html">Ver más...</a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <a href="mp10.html" class="card-img-top" style="text-decoration: none; background: url({% static 'home/Boton2.png' %}) no-repeat center center; background-size: cover; height: 120px; border-radius: 8px; transition: transform 0.2s;"></a>
+                    <div class="card-body">
+                        <h5 class="card-title" style="color: maroon;">MP10 EN EL AIRE</h5>
+                        <p class="card-text">La presencia del MP10 en el aire puede tener un impacto significativo en el sector agrícola, afectando negativamente la salud de los cultivos. <a href="mp10.html">Ver más...</a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <a href="quienesomos.html" class="card-img-top" style="text-decoration: none; background: url({% static 'home/Boton3.png' %}) no-repeat center center; background-size: cover; height: 120px; border-radius: 8px; transition: transform 0.2s;"></a>
+                    <div class="card-body">
+                        <h5 class="card-title" style="color: maroon;">CONÓCENOS</h5>
+                        <p class="card-text">Somos un equipo de estudiantes dedicados a proporcionar información sobre los niveles de MP10 y su impacto en los cultivos, comprometidos con la precisión, responsabilidad ambiental y agrícola. <a href="quienesomos.html">Ver más...</a></p>
+                    </div>
+                </div>
             </div>
         </div>
-    </section>
-        
-    <section class="section-buttons" style="padding: 0px 110px;">
-        <div class="button-container d-flex align-items-start m-1" style="width: 100%; height: 120px;">
-            <a href="mp10.html" class="button-div border btn-2" style="text-decoration: none; flex: 0 0 120px; height: 120px; border-radius: 8px; background: url({% static 'home/Boton2.png' %}) no-repeat center center; background-size: cover; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-            </a>
-            <div class="description p-2" style="flex: 1;">
-                <h4 style="color: maroon;">MP10 EN EL AIRE</h4>
-                <p>La presencia del MP10 en el aire puede tener un impacto significativo en el sector agrícola, afectando negativamente la salud de los cultivos. <a href="mp10.html">Ver más...</a></p>
-            </div>
-        </div>
-    </section>
+    </div>
     
-    <section class="section-buttons" style="padding: 5px 110px;">
-        <div class="button-container d-flex align-items-start m-1" style="width: 100%; height: 120px;">
-            <a href="quienesomos.html" class="button-div border btn-3" style="text-decoration: none; flex: 0 0 120px; height: 100px; border-radius: 8px; background: url({% static 'home/Boton3.png' %}) no-repeat center center; background-size: cover; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-            </a>
-            <div class="description p-2" style="flex: 1;">
-                <h4 style="color: maroon;">CONÓCENOS</h4>
-                <p>Somos un equipo de estudiantes dedicados a proporcionar información sobre los niveles de MP10 y su impacto en los cultivos, comprometidos con la precisión, responsabilidad ambiental y agrícola. <a href="quienesomos.html">Ver más...</a></p>
+    
+    <!-- Modal -->
+    <div class="modal fade wide-modal" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="infoModalLabel">Información</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Escala del 1 al 10 basada en los niveles de MP10 y sus efectos en las cosechas:
+                    </p>
+                    <ul>
+                        <li><strong>1. Muy bajo:</strong> Niveles extremadamente bajos de MP10, sin impacto significativo en las cosechas.</li>
+                        <li><strong>2. Bajo:</strong> Niveles bajos de MP10, impacto mínimo en las cosechas, seguro para la mayoría de los cultivos.</li>
+                        <li><strong>3. Moderadamente bajo:</strong> Niveles moderadamente bajos de MP10, impacto leve en las cosechas, afectando ligeramente su calidad o rendimiento.</li>
+                        <li><strong>4. Moderado:</strong> Niveles moderados de MP10, puede haber efectos adversos en las cosechas sensibles o en áreas con exposición prolongada.</li>
+                        <li><strong>5. Moderadamente alto:</strong> Niveles moderadamente altos de MP10, efectos adversos en las cosechas sensibles.</li>
+                        <li><strong>6. Alto:</strong> Niveles altos de MP10, efectos adversos en la mayoría de las cosechas, con pérdidas significativas.</li>
+                        <li><strong>7. Muy alto:</strong> Niveles muy altos de MP10, impacto grave en la mayoría de las cosechas, con pérdidas severas.</li>
+                        <li><strong>8. Extremadamente alto:</strong> Niveles extremadamente altos de MP10, impacto severo en todas las cosechas, con pérdidas catastróficas.</li>
+                        <li><strong>9. Peligroso:</strong> Niveles peligrosos de MP10, condiciones extremadamente dañinas para las cosechas, con pérdidas totales.</li>
+                        <li><strong>10. Catastrófico:</strong> Niveles catastróficos de MP10, condiciones devastadoras para las cosechas, con daños irreversibles.</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
             </div>
         </div>
-    </section>
-    
+    </div>
+
+
+
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
