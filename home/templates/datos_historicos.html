@@ -79,6 +79,12 @@
                         <input type="date" class="form-control" id="endDate">
                     </div>
                     <button type="submit" class="btn btn-primary">Buscar</button>
+                    
+                    <div class="form-group">
+                        <div id="showChartsBtnContainer" class="text-right mb-3" style="display: none;">
+                            <button type="button" class="btn btn-primary" id="showChartsBtn">Mostrar Gráficos</button>
+                        </div>
+                    </div>
                     <!-- Contenedor para el botón de descarga -->
                     <div class="form-group">
                         <div id="downloadBtnContainer" class="text-right mb-3" style="display: none;">
@@ -100,6 +106,29 @@
                     <tbody id="csvBody"></tbody>
                 </table>
             </div>
+            <!-- Ventana flotante -->
+            <div class="modal fade" id="graphModal" tabindex="-1" role="dialog" aria-labelledby="graphModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="graphModalLabel">Gráficos</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Gráfico de línea -->
+                            <div style="border-bottom: 1px solid #ddd; margin-bottom: 20px;">
+                                <canvas id="myLineChart"></canvas>
+                            </div>
+                            <!-- Gráfico de barras -->
+                            <canvas id="myBarChart"></canvas>
+                        </div>                        
+                    </div>
+                </div>
+            </div>
+            
+
         </div>
     </main>
     
@@ -114,7 +143,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    Los datos van desde enero del 2018 hasta diciembre del 2022.
+                    Los datos expuestos van desde enero del 2018 hasta diciembre del 2022, estos han sido obtenidos a traves de entidades confiables llamadas INIA, CEAZA y SINCA. 
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -124,9 +153,10 @@
     </div>
 
     <script>
+
         const estaciones = {
             Andacollo: ["Andacollo", "Chepiquilla", "ElSauce", "Hospital", "Urmenetra"],
-            LosVilos: ["Caimanes", "Chacay", "ElMauro", "PuntoChungo"],
+            LosVilos: ["Caimanes", "Chacay", "ElMauro", "PuntaChungo"],
             Salamanca: ["Camisas", "Coiron", "Cuncumen", "HotelMina", "QuelenAlto"]
         };
     
@@ -184,14 +214,110 @@
         
             displayCSV(rows);
         
-            // Mostrar el botón de descarga si hay datos para mostrar
+            // Mostrar los botones de descarga y gráficos si hay datos para mostrar
             if (rows.length > 1) {
                 document.getElementById('downloadBtnContainer').style.display = 'block';
+                document.getElementById('showChartsBtnContainer').style.display = 'block';
                 updateDownloadLink(rows, startDate, endDate);
             } else {
                 document.getElementById('downloadBtnContainer').style.display = 'none';
+                document.getElementById('showChartsBtnContainer').style.display = 'none';
             }
         }
+        
+        document.getElementById('showChartsBtn').addEventListener('click', function() {
+            console.log("evento");
+            // Obtener los datos del CSV actualmente cargado
+            const csvTable = document.getElementById('csvTable');
+            const headers = Array.from(csvTable.querySelectorAll('thead th')).map(th => th.textContent.trim());
+            const dataRows = Array.from(csvTable.querySelectorAll('tbody tr')).map(tr => Array.from(tr.querySelectorAll('td')).map(td => td.textContent.trim()));
+            
+            // Encontrar el índice de la columna 'Tiempo UTC-4' y 'Registros validados'
+            const timeIndex = headers.indexOf('Tiempo UTC-4');
+            const dataIndex = headers.indexOf('Registros validados');
+            
+            // Preparar datos para el gráfico
+            let labels = dataRows.map(row => row[timeIndex]);
+            let data = dataRows.map(row => parseFloat(row[dataIndex]));
+            
+            // Obtener fechas de inicio y fin seleccionadas
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            
+            // Filtrar datos por fecha
+            if (startDate && endDate) {
+                const startDateObj = new Date(startDate);
+                const endDateObj = new Date(endDate);
+                labels = labels.filter((label, index) => {
+                    const date = new Date(label);
+                    return date >= startDateObj && date <= endDateObj;
+                });
+                data = data.filter((datum, index) => {
+                    const date = new Date(labels[index]);
+                    return date >= startDateObj && date <= endDateObj;
+                });
+            }
+        
+            // Verificar si el gráfico de línea existe y destruirlo si es necesario
+            if (window.myLineChart && window.myLineChart instanceof Chart) {
+                window.myLineChart.destroy();
+            }
+
+            // Verificar si el gráfico de barras existe y destruirlo si es necesario
+            if (window.myBarChart && window.myBarChart instanceof Chart) {
+                window.myBarChart.destroy();
+            }
+        
+            // Crear el nuevo gráfico de línea
+            const ctxLine = document.getElementById('myLineChart').getContext('2d');
+            window.myLineChart = new Chart(ctxLine, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'MP10',
+                        data: data,
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        
+            // Crear el nuevo gráfico de barras
+            const ctxBar = document.getElementById('myBarChart').getContext('2d');
+            window.myBarChart = new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'MP10',
+                        data: data,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        
+            // Mostrar la ventana flotante
+            $('#graphModal').modal('show');
+        });
+        
         
         function updateDownloadLink(rows, startDate, endDate) {
             // Obtén los valores de sector y estación
@@ -258,7 +384,8 @@
             <p class="mb-0">&copy; 2024 Proyecto de Software</p>
         </div>
     </footer>
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>    
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>

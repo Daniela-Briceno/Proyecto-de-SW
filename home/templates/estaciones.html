@@ -88,11 +88,12 @@
             </div>
         </div>
 
-        <div id="resultContainer" class="card col-md-12 shadow mx-auto" style="display: none;">
+        <div id="resultContainer" class="card col-md-13 shadow mx-auto" style="display: none;">
             <button id="backButton" class="btn btn-secondary mt-3"><i class="fas fa-arrow-left"></i> Volver</button>
+            <button id="changeMapButton" class="btn btn-info mt-3 ml-3">Cambiar Mapa</button>                        
             <div class="row">
                 <div id="map" class="col-md-8 card-body"></div>
-                <div id="csvData" class="col-md-4 card-body"></div>
+                <div id="csvData" class="col-md-4 card-body" style="font-size: 14px;"></div>
             </div>
         </div>
     </main>
@@ -110,6 +111,12 @@
     
         // Función para mostrar el resultado y ocultar el formulario
         function mostrarCsvCard(event) {
+            // Limpiar el mapa antes de cargar nuevos datos
+            if (map) {
+                map.off(); // Eliminar todos los eventos asociados al mapa
+                map.remove(); // Eliminar el mapa del DOM
+                map = null; // Eliminar la referencia al mapa
+            }
             event.preventDefault(); // Previene el envío predeterminado del formulario
     
             document.getElementById('formContainer').style.display = 'none';
@@ -117,6 +124,83 @@
     
             var sector = document.getElementById('sector').value;
             cargarCsvData(sector);
+
+            // Función para cargar datos del CSV
+            function cargarCsvData(sector) {       
+
+                var csvFilePath = `/static/csv_files/coordenadas/${sector}.csv`;
+                $.get(csvFilePath, function(data) {
+                    var lines = data.split('\n');
+                    var html = '<table class="table table-striped"><thead><tr>';
+
+                    // Crear encabezados de la tabla
+                    var headers = lines[0].split(',');
+                    headers.forEach(function(header) {
+                        html += '<th>' + header + '</th>';
+                    });
+                    html += '</tr></thead><tbody>';
+
+                    // Crear filas de la tabla
+                    for (var i = 1; i < lines.length; i++) {
+                        var row = lines[i].split(',');
+                        html += '<tr>';
+                        row.forEach(function(cell) {
+                            html += '<td>' + cell + '</td>';
+                        });
+                        html += '</tr>';
+                    }
+                    html += '</tbody></table>';
+
+                    // Mostrar la tabla en el contenedor csvData
+                    document.getElementById('csvData').innerHTML = html;
+
+                    // Busca la línea que contiene las coordenadas y el impacto de datos históricos
+                    var coordenadas;
+                    var impactoHistorico;
+                    for (var i = 0; i < lines.length; i++) {
+                        if (lines[i].startsWith('Coordenadas')) {
+                            coordenadas = lines[i].split(',')[1].trim();
+                        }
+                        if (lines[i].startsWith('Impacto Datos Historicos')) {
+                            impactoHistorico = lines[i].split(',')[1].trim();
+                        }
+                        if (coordenadas && impactoHistorico) {
+                            break;
+                        }
+                    }
+
+                    if (coordenadas) {
+                        var latlng = coordenadas.split(' ');
+                        var lat = parseFloat(latlng[0]);
+                        var lng = parseFloat(latlng[1]);
+
+                        if (!isNaN(lat) && !isNaN(lng)) {
+                            // Inicializar el mapa Leaflet
+                            map = L.map('map').setView([lat, lng], 13);
+
+                            // Agregar una capa de mapa base de OpenStreetMap
+                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                maxZoom: 19,
+                                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                            }).addTo(map);
+
+                            // Agregar marcador al mapa con información del impacto de datos históricos
+                            var marker = L.marker([lat, lng]).addTo(map)
+                                .bindPopup(`<b>${sector}</b><br>Coordenadas: ${lat}, ${lng}<br>Impacto Datos Historicos: ${impactoHistorico}`)
+                                .openPopup();
+
+                            // Actualizar la vista del mapa cuando se abre el popup
+                            marker.on('popupopen', function() {
+                                map.setView(marker.getLatLng(), map.getZoom());
+                            });
+                        } else {
+                            console.error('Error al leer las coordenadas del archivo CSV.');
+                        }
+                    } else {
+                        console.error('No se encontraron coordenadas en el archivo CSV.');
+                    }
+                });
+            }
     
             setTimeout(function() {
                 if (!map) {
@@ -135,82 +219,45 @@
                 }
             }, 100); // Esperar 100 ms para asegurarse de que el contenedor del mapa esté visible
         }
-    
-        // Función para cargar datos del CSV
-        function cargarCsvData(sector) {
-            var csvFilePath = `/static/csv_files/coordenadas/${sector}.csv`;
-            $.get(csvFilePath, function(data) {
-                var lines = data.split('\n');
-                var html = '<table class="table table-striped"><thead><tr>';
 
-                // Crear encabezados de la tabla
-                var headers = lines[0].split(',');
-                headers.forEach(function(header) {
-                    html += '<th>' + header + '</th>';
-                });
-                html += '</tr></thead><tbody>';
+        // Asigna el evento clic al botón de cambiar mapa
+        document.getElementById('changeMapButton').addEventListener('click', cambiarMapa);
 
-                // Crear filas de la tabla
-                for (var i = 1; i < lines.length; i++) {
-                    var row = lines[i].split(',');
-                    html += '<tr>';
-                    row.forEach(function(cell) {
-                        html += '<td>' + cell + '</td>';
-                    });
-                    html += '</tr>';
-                }
-                html += '</tbody></table>';
+        // Variable para controlar el estado del mapa
+        var mapaSatelital = false;
 
-                // Mostrar la tabla en el contenedor csvData
-                document.getElementById('csvData').innerHTML = html;
+        // Función para cambiar el mapa entre modo satelital y modo de carreteras
+        function cambiarMapa() {
 
-                // Busca la línea que contiene las coordenadas
-                var coordenadas;
-                for (var i = 0; i < lines.length; i++) {
-                    if (lines[i].startsWith('Coordenadas')) {
-                        coordenadas = lines[i].split(',')[1].trim();
-                        break;
-                    }
-                }
-
-                if (coordenadas) {
-                    var latlng = coordenadas.split(' ');
-                    var lat = parseFloat(latlng[0]);
-                    var lng = parseFloat(latlng[1]);
-
-                    if (!isNaN(lat) && !isNaN(lng)) {
-                        if (!map) {
-                            // Inicializar el mapa Leaflet
-                            map = L.map('map').setView([lat, lng], 13);
-
-                            // Agregar una capa de mapa base de OpenStreetMap
-                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                                maxZoom: 19,
-                                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                            }).addTo(map);
-
-                        } else {
-                            map.setView([lat, lng], 13);
-                        }
-
-                        // Agregar marcador al mapa
-                        L.marker([lat, lng]).addTo(map)
-                            .bindPopup(`<b>${sector}</b><br>Coordenadas: ${lat}, ${lng}`)
-                            .openPopup();
-                    } else {
-                        console.error('Error al leer las coordenadas del archivo CSV.');
-                    }
-                } else {
-                    console.error('No se encontraron coordenadas en el archivo CSV.');
-                }
-            });
-        }
+            if (mapaSatelital) {
+                // Cambiar a modo de carreteras (OpenStreetMap)
+                map.setView(map.getCenter(), map.getZoom()); // Para evitar cambios bruscos de zoom, mantén el mismo centro y nivel de zoom
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+                mapaSatelital = false;
+            } else {
+                // Cambiar a modo satelital (Google Maps)
+                map.setView(map.getCenter(), map.getZoom()); // Mantén el mismo centro y nivel de zoom
+                L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+                    maxZoom: 20,
+                    subdomains:['mt0','mt1','mt2','mt3'],
+                    attribution: 'Map data &copy; <a href="https://www.google.com/">Google</a>'
+                }).addTo(map);
+                mapaSatelital = true;
+            }
+        }       
     
         // Función para retroceder al formulario
         function retrocederFormulario() {
+            // Restablecer el estado del mapa
+            mapaSatelital = false;
+
             document.getElementById('resultContainer').style.display = 'none';
             document.getElementById('formContainer').style.display = 'block';
         }
+
     
         // Asigna el evento submit al formulario
         document.getElementById('selectionForm').addEventListener('submit', mostrarCsvCard);

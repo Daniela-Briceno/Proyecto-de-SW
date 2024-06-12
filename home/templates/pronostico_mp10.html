@@ -83,6 +83,12 @@
                     </div>
                     
                     <button type="submit" class="btn btn-primary">Buscar</button>
+                    <!-- Botón para mostrar gráficos -->
+                    <div class="form-group">
+                        <div id="showChartsBtnContainer" class="text-right mb-3" style="display: none;">
+                            <button type="button" class="btn btn-primary" id="showChartsBtn">Mostrar Gráficos</button>
+                        </div>
+                    </div>                
                 </form>
             </div>
         </div>
@@ -99,6 +105,25 @@
                         <!-- Los datos de la tabla se llenarán dinámicamente -->
                     </tbody>
                 </table>
+            </div>
+            <!-- Ventana flotante -->
+            <div class="modal fade" id="graphModal" tabindex="-1" role="dialog" aria-labelledby="graphModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="graphModalLabel">Gráficos</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Gráfico de línea -->
+                            <div style="border-bottom: 1px solid #ddd; margin-bottom: 20px;">
+                                <canvas id="myLineChart"></canvas>
+                            </div>
+                        </div>                        
+                    </div>
+                </div>
             </div>
         </div>
     </main>
@@ -192,16 +217,87 @@
                     });
         
                     document.getElementById("dataCard").style.display = 'block';
+                    // Mostrar el contenedor del botón "Mostrar Gráficos" y luego el botón
+                    document.getElementById("showChartsBtnContainer").style.display = 'block';
                 })
                 .catch(error => {
                     console.error('Error al leer el archivo CSV:', error);
                     alert('Error al leer el archivo CSV.');
                 });
         }
-
+        
+        document.getElementById('showChartsBtn').addEventListener('click', function() {
+            const comuna = document.getElementById("sector").value;
+            const estacion = document.getElementById("estacionSelect").value;
+        
+            // Ruta del archivo CSV
+            const csvFileName = `/static/csv_files/pronostico/Prediccion_${comuna}_${estacion}.csv`;
+        
+            // Leer el archivo CSV y generar los gráficos
+            fetch(csvFileName)
+                .then(response => response.text())
+                .then(data => {
+                    const rows = data.split('\n').slice(1); // Elimina la primera fila (encabezados)
+                    
+                    // Parsear los datos del CSV
+                    const labels = [];
+                    const mp10Data = [];
+                    rows.forEach(row => {
+                        const [tiempo, mp10, impacto] = row.split(',');
+                        labels.push(tiempo);
+                        mp10Data.push(parseFloat(mp10));
+                    });
+        
+                    // Destruir gráficos existentes si los hay
+                    if (window.lineChart) {
+                        window.lineChart.destroy();
+                    }
+        
+                    // Configurar los datos del gráfico de línea
+                    const lineChartData = {
+                        labels: labels,
+                        datasets: [{
+                            label: 'MP10',
+                            data: mp10Data,
+                            borderColor: 'rgb(75, 192, 192)',
+                            tension: 0.1
+                        }]
+                    };
+        
+        
+                    // Crear el gráfico de línea
+                    const lineChartCtx = document.getElementById('myLineChart').getContext('2d');
+                    window.lineChart = new Chart(lineChartCtx, {
+                        type: 'line',
+                        data: lineChartData,
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Gráfico de MP10 a lo largo del tiempo'
+                                }
+                            }
+                        }
+                    });
+        
+                    // Mostrar la ventana flotante
+                    $('#graphModal').modal('show');
+                })
+                .catch(error => {
+                    console.error('Error al leer el archivo CSV:', error);
+                    alert('Error al leer el archivo CSV.');
+                });
+        });
+        
+        
     </script>
 
     <!-- Bootstrap JS, Popper.js, and jQuery -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -215,3 +311,4 @@
     
 </body>
 </html>
+
