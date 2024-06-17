@@ -73,3 +73,23 @@ pip install six==1.16.0
 pip install sqlparse==0.5.0
 pip install tzdata==2024.1
 ```
+
+## Uso
+
+Para utilizar este proyecto, sigue estos pasos:
+
+1. Clona este repositorio en tu máquina local:
+
+   ```bash
+   git clone https://github.com/Daniela-Briceno/Proyecto-de-SW.git
+   ```
+
+2. Abre el terminal del proyecto
+3. 
+4. Navega al directorio del proyecto:
+   cd Proyecto-de-SW
+   
+6. Utiliza el comando runserver de la siguiente manera para ejecutar el proyecto:
+   ```bash
+   python manage.py runserver
+   ```
