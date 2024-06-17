@@ -120,9 +120,6 @@
                             <!-- Gráfico de línea -->
                             <div style="border-bottom: 1px solid #ddd; margin-bottom: 20px;">
                                 <canvas id="myLineChart"></canvas>
-                            </div>
-                            <!-- Gráfico de barras -->
-                            <canvas id="myBarChart"></canvas>
                         </div>                        
                     </div>
                 </div>
@@ -290,30 +287,6 @@
                     }
                 }
             });
-        
-            // Crear el nuevo gráfico de barras
-            const ctxBar = document.getElementById('myBarChart').getContext('2d');
-            window.myBarChart = new Chart(ctxBar, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'MP10',
-                        data: data,
-                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        
             // Mostrar la ventana flotante
             $('#graphModal').modal('show');
         });
