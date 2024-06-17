@@ -1,5 +1,6 @@
 # Cultivo Seguro
 Prototipo Version 1.0
+Modelo de software que permite pronosticar los grados de afectación o impacto de los cultivos producidos por el MP10 para asi poder informar al usuario.
 
 # Instalación de Python
 
