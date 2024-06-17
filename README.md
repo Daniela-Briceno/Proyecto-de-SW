@@ -85,11 +85,13 @@ Para utilizar este proyecto, sigue estos pasos:
    ```
 
 2. Abre el terminal del proyecto
-3. 
-4. Navega al directorio del proyecto:
+   
+3. Navega al directorio del proyecto:
    cd Proyecto-de-SW
    
-6. Utiliza el comando runserver de la siguiente manera para ejecutar el proyecto:
+4. Utiliza el comando runserver de la siguiente manera para ejecutar el proyecto:
    ```bash
    python manage.py runserver
    ```
+   Esto iniciará el servidor de desarrollo de Django en tu máquina local en el puerto predeterminado [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
+   
